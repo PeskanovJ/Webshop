@@ -4,52 +4,46 @@
     <div class="col-md-4">
         <section>
             <form id="account" method="post" enctype="multipart/form-data">
+                <br>
                 <h2>Profil</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-floating py-2 col-12">
-                    <label><b>Profile picture:</b></label><br>
+                    <h3>Profile picture:</h3>
                     <img src="@Model.ProfileUrl" class="card-img-top rounded" style="width:30%;height:30%"/>
-
-             
                 </div>
-                <div class="mb-3">
+
+                <div class="form-label mb-3">
                     <label asp-for="@Model.ProfileUrl">Change profile picture</label>
                     <input type="file" id="uploadBox" name="file" class="form-control" />
-
                 </div>
-                <br>
-                <div class="form-floating py-2 col-12">
-                    <label><b>Email:</b></label><br>
+                
+                <div class="form-label py-2 col-12">
+                    <label><b>Email:</b></label>
                     <label><b>@Model.Email</b></label><br>
-                    <br>
                 </div>
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="FirstName"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="FirstName"></label></b>
                     <input asp-for="FirstName" class="form-control" aria-required="true" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
-
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="LastName"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="LastName"></label></b>
                     <input asp-for="LastName" class="form-control" aria-required="true" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-
-                <div class="form-floating py-2 col-6">
+                <div class="form-label py-2 col-6">
                     <label asp-for="PhoneNumber"></label>
                     <input asp-for="PhoneNumber" class="form-control" aria-required="true" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
-                <br>
-                <div class="form-floating py-2 col-12">
+                <div class="form-label py-2 col-12">
                     <label><b>Account Created:</b></label><br>
                     <label><b>@Model.Created.ToString("ddd, dd MMM yyy")</b></label><br>
                     <br>
                 </div>
-                <br>
-                <button id="updateSubmit" type="submit" class="w-100 btn btn-primary">Update</button>
+                <button id="updateSubmit" type="submit" class="btn btn-primary">Update profile</button>
             </form>
                 <br>
         </section>

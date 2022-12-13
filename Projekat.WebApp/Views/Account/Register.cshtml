@@ -4,37 +4,38 @@
     <div class="col-md-4">
         <section>
             <form id="account" method="post">
+                <br>
                 <h2>Register</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="FirstName"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="FirstName"></label></b>
                     <input asp-for="FirstName" class="form-control" aria-required="true" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
 
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="LastName"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="LastName"></label></b>
                     <input asp-for="LastName" class="form-control" aria-required="true" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
-                    <label asp-for="Email"></label>
+                <div class="form-label py-2 col-12">
+                    <b><label asp-for="Email"></label></b>
                     <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="PhoneNumber"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="PhoneNumber"></label></b>
                     <input asp-for="PhoneNumber" class="form-control" aria-required="true" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="Password"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="Password"></label></b>
                     <input asp-for="Password" class="form-control" aria-required="true" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-6">
-                    <label asp-for="RepeatPassword"></label>
+                <div class="form-label py-2 col-6">
+                    <b><label asp-for="RepeatPassword"></label></b>
                     <input asp-for="RepeatPassword" class="form-control" aria-required="true" />
                     <span asp-validation-for="RepeatPassword" class="text-danger"></span>
                 </div>
@@ -43,7 +44,7 @@
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-primary">Register</button>
             </form>
             <div class="container login">
-                <p>Already have an account? <a asp-action="Login">Login</a>.</p>
+              <p>Already have an account? <a asp-action="Login">Login</a>.</p>
             </div>
         </section>
     </div>
