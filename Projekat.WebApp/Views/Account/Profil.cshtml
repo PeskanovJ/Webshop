@@ -1,0 +1,58 @@
+﻿@model Projekat.Shared.DTOs.ProfileDTO
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post" enctype="multipart/form-data">
+                <h2>Profil</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-floating py-2 col-12">
+                    <label><b>Profile picture:</b></label><br>
+                    <img src="@Model.ProfileUrl" class="card-img-top rounded" style="width:30%;height:30%"/>
+
+             
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.ProfileUrl">Change profile picture</label>
+                    <input type="file" id="uploadBox" name="file" class="form-control" />
+
+                </div>
+                <br>
+                <div class="form-floating py-2 col-12">
+                    <label><b>Email:</b></label><br>
+                    <label><b>@Model.Email</b></label><br>
+                    <br>
+                </div>
+                <div class="form-floating py-2 col-6">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" aria-required="true" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-2 col-6">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" aria-required="true" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-2 col-6">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" aria-required="true" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <br>
+                <div class="form-floating py-2 col-12">
+                    <label><b>Account Created:</b></label><br>
+                    <label><b>@Model.Created.ToString("ddd, dd MMM yyy")</b></label><br>
+                    <br>
+                </div>
+                <br>
+                <button id="updateSubmit" type="submit" class="w-100 btn btn-primary">Update</button>
+            </form>
+                <br>
+        </section>
+    </div>
+
+</div>

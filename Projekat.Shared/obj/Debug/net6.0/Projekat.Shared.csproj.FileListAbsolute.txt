@@ -1,0 +1,12 @@
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\bin\Debug\net6.0\Projekat.Shared.deps.json
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\bin\Debug\net6.0\Projekat.Shared.dll
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\bin\Debug\net6.0\Projekat.Shared.pdb
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.csproj.AssemblyReference.cache
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.AssemblyInfoInputs.cache
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.AssemblyInfo.cs
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.csproj.CoreCompileInputs.cache
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.dll
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\refint\Projekat.Shared.dll
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\Projekat.Shared.pdb
+C:\Users\Jovan\Desktop\Jovan\Skuteri\Projekat.Shared\obj\Debug\net6.0\ref\Projekat.Shared.dll

@@ -1,0 +1,170 @@
+﻿
+@using Microsoft.AspNetCore.Http;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Home</title>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/owl.carousel.css">
+    <link rel="stylesheet" href="~/css/jquery.bxslider.css">
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="~/css/responsive.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <div class="mainmenu-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    <li><img src="~/img/s-logo.svg" width="150" height="50" style="padding-right:10px;padding-top:5px"/></li>
+                                    <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+                                    <li><a href="shop.html">Shop page</a></li>
+                                    <li><a href="single-product.html">Single product</a></li>
+                                    <li><a href="cart.html">Cart</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+
+                                    @if ((Context.Session != null && Context.Session.GetString("Email") != null))
+                                    {
+                                        <li class="nav-item">
+                                            <a id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Session.GetString("Email")" title="Manage">Hello <b>@Context.Session.GetString("FullName")</b></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a id="logout" asp-controller="Account" asp-action="Logout">Logout</a>
+                                        </li>
+                                    }
+                                    else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
+                                    {
+                                        <li class="nav-item">
+                                            <a id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Request.Cookies["LoginCookieEmail"]" title="Manage">Hello <b>@Context.Request.Cookies["LoginCookieFullName"]</b></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a id="logout" asp-controller="Account" asp-action="Logout">Logout</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a id="register" asp-controller="Account" asp-action="Register">Register</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a id="login" asp-controller="Account" asp-action="Login">Login</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div> <!-- End mainmenu area -->
+            </div>
+        </nav>
+
+    </header><!-- End header area -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <div class="footer-top-area">
+        <div class="zigzag-bottom"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-6">
+                    <div class="footer-about-us">
+                        <h2><span>Prodavnica eVozila</span></h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis sunt id doloribus vero quam laborum quas alias dolores blanditiis iusto consequatur, modi aliquid eveniet eligendi iure eaque ipsam iste, pariatur omnis sint! Suscipit, debitis, quisquam. Laborum commodi veritatis magni at?</p>
+                        <div class="footer-social">
+                            <a href="#" target="_blank"><i class="fa fa-facebook"></i></a>
+                            <a href="#" target="_blank"><i class="fa fa-twitter"></i></a>
+                            <a href="#" target="_blank"><i class="fa fa-youtube"></i></a>
+                            <a href="#" target="_blank"><i class="fa fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="footer-menu">
+                        <h2 class="footer-wid-title">Navigacija </h2>
+                        <ul>
+                            <li><a href="#">Moj nalog</a></li>
+                            <li><a href="#">Istorija porudzbina</a></li>
+                            <li><a href="#">Moji oglasi</a></li>
+                            <li><a href="#">Lista želja</a></li>
+                            <li><a href="#">Naslovna</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="footer-menu">
+                        <h2 class="footer-wid-title">Kategorije</h2>
+                        <ul>
+                            <li><a href="#">Električni trotineti</a></li>
+                            <li><a href="#">Električni bicikli</a></li>
+                            <li><a href="#">Oprema za električne trotinete</a></li>
+                            <li><a href="#">Delovi za električne trotinete</a></li>
+                            <li><a href="#">Gume za električni trotinet</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div> <!-- End footer top area -->
+
+    <div class="footer-bottom-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="copyright">
+                        <p>&copy; 2022 Sotex. All Rights Reserved. <a href="https://www.sotexsolutions.com/" target="_blank">sotexsolutions.com</a></p>
+                    </div>
+                </div>
+
+                @*<div class="col-md-4">
+                        <div class="footer-card-icon">
+                            <i class="fa fa-cc-discover"></i>
+                            <i class="fa fa-cc-mastercard"></i>
+                            <i class="fa fa-cc-paypal"></i>
+                            <i class="fa fa-cc-visa"></i>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div> <!-- End footer bottom area -->
+
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery.min.js"></script>
+
+    <!-- jQuery sticky menu -->
+    <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/jquery.sticky.js"></script>
+
+    <!-- jQuery easing -->
+    <script src="~/js/jquery.easing.1.3.js"></script>
+
+    <!-- Main Script -->
+    <script src="~/js/main.js"></script>
+
+    <!-- Slider -->
+    <script type="text/javascript" src="~/js/jquery.bxslider.js"></script>
+    <script type="text/javascript" src="~/js/script.slider.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

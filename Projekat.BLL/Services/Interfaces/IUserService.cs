@@ -1,0 +1,21 @@
+﻿using Projekat.Shared.Common;
+using Projekat.Shared.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Projekat.BLL.Services.Interfaces
+{
+    public interface IUserService
+    {
+        Task<ResponsePackage<bool>> RegisterUser(UserDTO userDTO);
+        ResponsePackage<UserDTO> LoginUser(LoginDTO loginDTO);
+        ResponsePackage<UserDTO> ActivateUser(Guid guid);
+        Task<ResponsePackage<bool>> ForgotPassword(string email);
+        ResponsePackage<bool> ResetPassword(PasswordResetDTO passwordResetDTO);
+        ResponsePackage<ProfileDTO> GetProfile(string email);
+        ResponsePackage<bool> UpdateProfile(ProfileDTO profileDTO);
+    }
+}

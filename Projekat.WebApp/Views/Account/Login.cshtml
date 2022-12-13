@@ -1,0 +1,44 @@
+﻿@model Projekat.Shared.DTOs.LoginDTO
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post">
+                <h2>Use a local account to log in.</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-floating">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" aria-required="true" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-2 col-6">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" aria-required="true" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-floating">
+
+                    <input type="checkbox" id="rememberMe" class="form-check-input" asp-for="RememberMe"/>
+                    <label class="form-label">Remember me</label>
+                </div>
+                <br>
+                <div>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                </div>
+                <div>
+                    <p>
+                        <a asp-action="ForgotPassword">Forgot your password?</a>
+                    </p>
+                    <p>
+                        <a asp-action="Register">Register as a new user</a>
+                    </p>
+                    <p>
+                        <a id="resend-confirmation" asp-action="./ResendEmailConfirmation">Resend email confirmation</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+
+</div>
