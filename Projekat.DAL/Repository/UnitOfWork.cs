@@ -17,13 +17,13 @@ namespace Projekat.DAL.Repository
             _db = db;
           
             Category = new CategoryRepository(_db);
-            Product = new ItemRepository(_db);
+            Item = new ItemRepository(_db);
             
             User= new UserRepository(_db);
            
         }
         public ICategoryRepository Category { get; private set; }
-        public IItemRepository Product { get; set; }
+        public IItemRepository Item { get; set; }
         public IUserRepository User { get; set; }
         
 

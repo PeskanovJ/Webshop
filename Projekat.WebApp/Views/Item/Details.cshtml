@@ -1,0 +1,28 @@
+﻿@model Projekat.Shared.DTOs.ItemDTO
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="item" method="post" enctype="multipart/form-data">
+                <br>
+                <h2>@Model.Title</h2>
+                <hr />
+
+                @*SLIDE SHOW*@
+                @*<div class="form-floating py-2 col-12">
+                    <h3>Profile picture:</h3>
+                    <img src="@Model.ProfileUrl" class="card-img-top rounded" style="width:30%;height:30%" />
+                </div>*@
+
+                <div class="form-label py-2 col-12">
+                    <label><b>Price:</b></label>
+                    <label><b>@Model.Price</b></label><br>
+                </div>
+               
+                <button id="addToCart" type="submit" class="btn btn-primary">Kupi</button>
+            </form>
+            <br>
+        </section>
+    </div>
+
+</div>

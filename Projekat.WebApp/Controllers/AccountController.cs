@@ -38,12 +38,13 @@ namespace Projekat.WebApp.Controllers
         [HttpGet]
         public  IActionResult ActivateAndLogin(Guid guid)
         {
-            ResponsePackage<UserDTO> response = _userService.ActivateUser(guid);
+            ResponsePackage<ProfileDTO> response = _userService.ActivateUser(guid);
 
             if (response.Status == ResponseStatus.OK)
             {
                 HttpContext.Session.SetString("Email",response.Data.Email);
                 HttpContext.Session.SetString("FullName", response.Data.FirstName+" "+response.Data.LastName);
+                HttpContext.Session.SetString("Avatar", response.Data.ProfileUrl);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -61,7 +62,7 @@ namespace Projekat.WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                ResponsePackage<UserDTO> response = _userService.LoginUser(LoginDTO);
+                ResponsePackage<ProfileDTO> response = _userService.LoginUser(LoginDTO);
 
                 if (response.Status == ResponseStatus.OK)
                 {
@@ -72,13 +73,14 @@ namespace Projekat.WebApp.Controllers
                         cookieOptions.Path = "/";
                         HttpContext.Response.Cookies.Append("LoginCookieEmail", response.Data.Email, cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieFullName", response.Data.FirstName + " " + response.Data.LastName, cookieOptions);
-
+                        HttpContext.Response.Cookies.Append("LoginCookieAvatar", response.Data.ProfileUrl,cookieOptions);
                         return RedirectToAction("Index", "Home");
                     }
                     else
                     {
                         HttpContext.Session.SetString("Email", response.Data.Email);
                         HttpContext.Session.SetString("FullName", response.Data.FirstName + " " + response.Data.LastName);
+                        HttpContext.Session.SetString("Avatar", response.Data.ProfileUrl );
                         return RedirectToAction("Index", "Home");
                     }
 
@@ -126,6 +128,7 @@ namespace Projekat.WebApp.Controllers
             HttpContext.Session.Clear();
             HttpContext.Response.Cookies.Delete("LoginCookieFullName");
             HttpContext.Response.Cookies.Delete("LoginCookieEmail");
+            HttpContext.Response.Cookies.Delete("LoginCookieAvatar");
             return RedirectToAction("Index","Home");
         }
 
@@ -235,9 +238,13 @@ namespace Projekat.WebApp.Controllers
                         cookieOptions.Path = "/";
                         HttpContext.Response.Cookies.Append("LoginCookieFullName", profileDTO.FirstName + " " + profileDTO.LastName, cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieEmail", profileDTO.Email, cookieOptions);
+                        HttpContext.Response.Cookies.Append("LoginCookieAvatar", profileDTO.ProfileUrl, cookieOptions);
                     }
                     if (HttpContext.Session.Get("FullName") != null)
+                    {
                         HttpContext.Session.SetString("FullName", profileDTO.FirstName + " " + profileDTO.LastName);
+                        HttpContext.Session.SetString("Avatar", profileDTO.ProfileUrl);
+                    }
 
 
                     return RedirectToAction("Index","Home");

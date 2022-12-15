@@ -33,14 +33,14 @@ namespace Projekat.BLL.Services.Implementations
             _configuration= configuration;
         }
 
-        public ResponsePackage<UserDTO> ActivateUser(Guid guid)
+        public ResponsePackage<ProfileDTO> ActivateUser(Guid guid)
         {
             User u = _uow.User.GetFirstOrDefault(u => u.ActivationGuid == Guid.Parse(guid.ToString().ToUpper()));
             u.ActivationGuid = Guid.Empty;
             _uow.User.Update(u);
             _uow.Save();
 
-            return new ResponsePackage<UserDTO>(new UserDTO()
+            return new ResponsePackage<ProfileDTO>(new ProfileDTO()
             {
                 FirstName = u.FirstName,
                 LastName = u.LastName,
@@ -51,7 +51,7 @@ namespace Projekat.BLL.Services.Implementations
 
         }
 
-        public ResponsePackage<UserDTO> LoginUser(LoginDTO loginDTO)
+        public ResponsePackage<ProfileDTO> LoginUser(LoginDTO loginDTO)
         {
             User u = _uow.User.GetFirstOrDefault(u => u.Email == loginDTO.Email);
 
@@ -59,21 +59,22 @@ namespace Projekat.BLL.Services.Implementations
             {
                 if (u.ActivationGuid == Guid.Empty)
                 {
-                    return new ResponsePackage<UserDTO>(new UserDTO
+                    return new ResponsePackage<ProfileDTO>(new ProfileDTO
                     {
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         Email = u.Email,
+                        ProfileUrl= u.ProfileUrl,
 
                     }, ResponseStatus.OK, "Login successful");
                 }
                 else
                 {
-                    return new ResponsePackage<UserDTO>(null, ResponseStatus.AccountNotActivated, "Account is not activated");
+                    return new ResponsePackage<ProfileDTO>(null, ResponseStatus.AccountNotActivated, "Account is not activated");
                 }
             }
             else
-                return new ResponsePackage<UserDTO>(null, ResponseStatus.NotFound, "There was an error with login");
+                return new ResponsePackage<ProfileDTO>(null, ResponseStatus.NotFound, "There was an error with login");
         }
 
         private bool MailExists(string email)

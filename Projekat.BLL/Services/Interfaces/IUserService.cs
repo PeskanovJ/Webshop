@@ -11,8 +11,8 @@ namespace Projekat.BLL.Services.Interfaces
     public interface IUserService
     {
         Task<ResponsePackage<bool>> RegisterUser(UserDTO userDTO);
-        ResponsePackage<UserDTO> LoginUser(LoginDTO loginDTO);
-        ResponsePackage<UserDTO> ActivateUser(Guid guid);
+        ResponsePackage<ProfileDTO> LoginUser(LoginDTO loginDTO);
+        ResponsePackage<ProfileDTO> ActivateUser(Guid guid);
         Task<ResponsePackage<bool>> ForgotPassword(string email);
         ResponsePackage<bool> ResetPassword(PasswordResetDTO passwordResetDTO);
         ResponsePackage<ProfileDTO> GetProfile(string email);

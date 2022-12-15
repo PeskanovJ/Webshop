@@ -8,7 +8,7 @@ namespace Projekat.DAL.Repository.IRepository
 {
     public interface IUnitOfWork
     {
-        IItemRepository Product { get; }
+        IItemRepository Item { get; }
         IUserRepository User { get; }
         ICategoryRepository Category { get; }
         void Save();
