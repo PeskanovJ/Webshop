@@ -1129,3 +1129,35 @@ div.cart-collaterals ul.products li.product:hover .add_to_cart_button{background
 .pagination > li > a, .pagination > li > span {
   color: #5a88ca;
 }
+
+
+input[type="file"] {
+    display: block;
+}
+
+.imageThumb {
+    max-height: 75px;
+    border: 2px solid;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.pip {
+    
+    width:9%;
+    margin: 10px 10px 5px 0;
+}
+
+.remove {
+    display: block;
+    background: #444;
+    border: 1px solid black;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+}
+
+.remove:hover {
+    background: white;
+    color: black;
+}

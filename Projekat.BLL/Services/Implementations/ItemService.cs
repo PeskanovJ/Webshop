@@ -21,9 +21,26 @@ namespace Projekat.BLL.Services.Implementations
             _unitOfWork = unitOfWork;
         }
 
-        public ResponsePackage<bool> AddItem(ItemDTO itemDTO)
+        public ResponsePackage<bool> AddItem(ItemDTO newItemDTO)
         {
-            throw new NotImplementedException();
+            Item item = new Item();
+            item.Title = newItemDTO.Title;
+            item.Description = newItemDTO.Description;
+            
+            item.Created = DateTime.Now;
+            item.Price = newItemDTO.Price;
+            item.City = newItemDTO.City;
+            
+            try
+            {
+                _unitOfWork.Item.Add(item);
+                _unitOfWork.Save();
+
+                return new ResponsePackage<bool>(true, ResponseStatus.OK, "Item added successfully");
+            }catch(Exception ex)
+            {
+                return new ResponsePackage<bool>(false, ResponseStatus.InternalServerError, "There was an error while adding an item:" + ex.Message);
+            }
         }
 
         public ResponsePackage<bool> DeleteItem(int id)
@@ -31,9 +48,26 @@ namespace Projekat.BLL.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public ResponsePackage<ItemDTO> GetAll()
+        public ResponsePackage<IEnumerable<ItemDTO>> GetAll()
         {
-            throw new NotImplementedException();
+            var list = _unitOfWork.Item.GetAll();
+            var retList= new List<ItemDTO>();
+            foreach(var item in list)
+            {
+                ItemDTO ItemDTO= new ItemDTO()
+                {
+                    Title = item.Title,
+                    Description = item.Description,
+                    Price= item.Price,
+                    City= item.City,
+                    Id= item.Id,
+                    CategoryId= item.CategoryId,
+                    Make= item.Make,
+                    Model= item.Model,
+                };
+                retList.Add(ItemDTO);
+            }
+            return new ResponsePackage<IEnumerable<ItemDTO>>(retList,ResponseStatus.OK,"All items");
         }
 
         public ResponsePackage<ItemDTO> GetItem(int id)
@@ -45,7 +79,7 @@ namespace Projekat.BLL.Services.Implementations
             else
                 return new ResponsePackage<ItemDTO>(new ItemDTO { 
                     Title=i.Title, 
-                    Category= i.Category, 
+                    CategoryId= i.CategoryId, 
                     City=i.City, 
                     Description=i.Description, 
                     Make=i.Make,
@@ -54,7 +88,7 @@ namespace Projekat.BLL.Services.Implementations
                 }, ResponseStatus.OK, "Item found");
         }
 
-        public ResponsePackage<bool> UpdateItem(ItemDTO itemDTO)
+        public ResponsePackage<bool> UpdateItem(NewItemDTO newItemDTO)
         {
             throw new NotImplementedException();
         }

@@ -16,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();

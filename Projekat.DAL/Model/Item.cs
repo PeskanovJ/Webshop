@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,14 +20,15 @@ namespace Projekat.DAL.Model
         public string City { get; set; }
         public string Description { get; set; }
         ICollection<Image>? Images { get; set; }
-        [Required]
-        public string Category { get; set; }
-
         public DateTime Created { get; set; }
         ICollection<Review>? Reviews { get; set; }
         ICollection<Comment>? Comments { get; set; }
 
-
+        [Required]
+        [Display(Name = "Category")]
+        public int CategoryId { get; set; }
+        [ValidateNever]
+        public Category Category { get; set; }
 
 
         //Title

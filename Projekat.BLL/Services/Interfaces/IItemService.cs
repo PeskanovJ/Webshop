@@ -1,4 +1,5 @@
-﻿using Projekat.Shared.Common;
+﻿using Projekat.DAL.Model;
+using Projekat.Shared.Common;
 using Projekat.Shared.DTOs;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ namespace Projekat.BLL.Services.Interfaces
         //Task<ResponsePackage<bool>> RegisterUser(UserDTO userDTO);
         ResponsePackage<ItemDTO> GetItem(int id);
         ResponsePackage<bool> AddItem(ItemDTO itemDTO);
-        ResponsePackage<bool> UpdateItem(ItemDTO itemDTO);
-        ResponsePackage<ItemDTO> GetAll();
+        ResponsePackage<bool> UpdateItem(NewItemDTO itemDTO);
+        ResponsePackage<IEnumerable<ItemDTO>> GetAll();
         ResponsePackage<bool> DeleteItem(int id);
     }
 }

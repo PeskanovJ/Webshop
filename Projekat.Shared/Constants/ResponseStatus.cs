@@ -10,6 +10,7 @@
         InvalidEmail = 1000,
         InvalidPhoneNo = 1001,
         AccountNotActivated=1002,
-        InvalidPasswordGuid=1003
+        InvalidPasswordGuid=1003,
+        CategoryNotFound=1004
     }
 }
