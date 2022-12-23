@@ -30,7 +30,17 @@ namespace Projekat.BLL.Services.Implementations
             item.Created = DateTime.Now;
             item.Price = newItemDTO.Price;
             item.City = newItemDTO.City;
-            
+            item.Make= newItemDTO.Make;
+            item.Model= newItemDTO.Model;
+            item.CategoryId= newItemDTO.CategoryId;
+            if(newItemDTO.Images!= null)
+            {
+                item.Images = new List<Image>();
+                foreach(var image in newItemDTO.Images)
+                {
+                    item.Images.Add(new Image() { IsMainImage = image.IsMainImage, Order = image.Order, Url = image.Url });
+                }
+            }
             try
             {
                 _unitOfWork.Item.Add(item);

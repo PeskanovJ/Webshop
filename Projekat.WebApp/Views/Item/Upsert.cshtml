@@ -77,26 +77,34 @@
 @section Scripts{
     <script>
         var tempFiles = [];
+        var dict = new Object();
         $(document).ready(function () {
             if (window.File && window.FileList && window.FileReader) {
                 $("#files").on("change", function (e) {
                     var files = e.target.files,
                         filesLength = files.length;
+                    var guids = [];
                     for (var i = 0; i < filesLength; i++) {
                         var f = files[i]
                         var fileReader = new FileReader();
-                        var guid = Math.random();
+                        var guid = Math.floor(1000 + Math.random() * 9000);
+                        guids.push(guid);
                         fileReader.onload = (function (e) {
-                            $('<span class="pip">' +
+                            $('<span class="pip" id="' + guids.pop() + '" >' +
                                 '<img class="imageThumb" id="imageThumb" src="' + e.target.result + '" />' +
-                                '<br/><span id="' + guid + '" class="remove">Remove</span><br/>' +
+                                '<br/><span class="remove">Remove</span><br/>' +
                                 '</span>').insertAfter("#mainImage");
-
+                            
                             $("#mainImage").attr("src", e.target.result);
 
                             $(".remove").click(function () {
+                                name = dict[$(this).parent(".pip").attr("id")];
+                                delete dict[$(this).parent(".pip").attr("id")];
+                                tempFiles = tempFiles.filter(function (item) {
+
+                                    return item.name != name;
+                                });
                                 $(this).parent(".pip").remove();
-                                console.log(tempFiles);
                             });
                             $(".imageThumb").click(function () {
                                 $("#mainImage").attr("src", this.src);
@@ -104,20 +112,19 @@
 
                         });
                         fileReader.readAsDataURL(f);
-                        console.log($('#' + guid).get())
-                        //document.getElementById(guid).data = f.name;
+                        dict[guids[guids.length - 1]] = f.name;
                         tempFiles.push(f);                        
                     }
                 });
             } else {
                 alert("Your browser doesn't support to File API")
             }
+            
         });
 
         $("form").submit(function (e) {
             e.preventDefault();
             var formData = new FormData();
-
             var ItemDTO = {
                 Id: 0,
                 Title: $('#ItemDTO_Title').val(),

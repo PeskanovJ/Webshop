@@ -39,7 +39,69 @@ namespace Projekat.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMainImage")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Projekat.DAL.Model.Item", b =>
@@ -96,7 +158,7 @@ namespace Projekat.DAL.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("Products");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Projekat.DAL.Model.Message", b =>
@@ -134,6 +196,39 @@ namespace Projekat.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("Review");
                 });
 
             modelBuilder.Entity("Projekat.DAL.Model.User", b =>
@@ -193,6 +288,22 @@ namespace Projekat.DAL.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Projekat.DAL.Model.Comment", b =>
+                {
+                    b.HasOne("Projekat.DAL.Model.Item", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Image", b =>
+                {
+                    b.HasOne("Projekat.DAL.Model.Item", null)
+                        .WithMany("Images")
+                        .HasForeignKey("ItemId");
+                });
+
             modelBuilder.Entity("Projekat.DAL.Model.Item", b =>
                 {
                     b.HasOne("Projekat.DAL.Model.Category", "Category")
@@ -217,6 +328,24 @@ namespace Projekat.DAL.Migrations
                     b.HasOne("Projekat.DAL.Model.User", null)
                         .WithMany("Messages")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Review", b =>
+                {
+                    b.HasOne("Projekat.DAL.Model.Item", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Projekat.DAL.Model.Item", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Projekat.DAL.Model.User", b =>

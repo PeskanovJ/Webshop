@@ -19,10 +19,10 @@ namespace Projekat.DAL.Model
         public int? Price { get; set; }
         public string City { get; set; }
         public string Description { get; set; }
-        ICollection<Image>? Images { get; set; }
+        public ICollection<Image>? Images { get; set; }
         public DateTime Created { get; set; }
-        ICollection<Review>? Reviews { get; set; }
-        ICollection<Comment>? Comments { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
 
         [Required]
         [Display(Name = "Category")]

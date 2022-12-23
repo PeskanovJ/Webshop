@@ -25,12 +25,10 @@ namespace Projekat.DAL.Repository
 
         public void Update(Item obj)
         {
-            var objFromDb = _db.Products.FirstOrDefault(u => u.Id == obj.Id);
+            var objFromDb = _db.Items.FirstOrDefault(u => u.Id == obj.Id);
             if (objFromDb != null)
             {
                 objFromDb.Title= obj.Title;
-                
-
             }
         }
     }

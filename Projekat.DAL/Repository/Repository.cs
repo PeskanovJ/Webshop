@@ -16,8 +16,6 @@ namespace Projekat.DAL.Repository
         public Repository(ApplicationDbContext db)
         {
             _db = db;
-            //_db.ShoppingCarts.AsNoTracking()
-            //_db.ShoppingCarts.Include(u=>u.Product)
             this.dbSet=_db.Set<T>();
         }
         public void Add(T entity)

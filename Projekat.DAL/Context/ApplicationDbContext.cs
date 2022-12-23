@@ -9,8 +9,8 @@ namespace Projekat.DAL
         {
 
         }
-        //public DbSet<Category> Categories { get; set; }
-        public DbSet<Item> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<User> Users { get; set; }
 
 
