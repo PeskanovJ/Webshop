@@ -25,7 +25,7 @@ namespace Projekat.DAL.Model
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
         public ICollection<Item> PostedItems { get; set; }
-        public ICollection<Item> FollowedItems { get; set; }
+        public ICollection<Following> FollowedItems { get; set; }
         public ICollection<Message> Messages { get; set; }
         public SD.Roles Role { get; set; }
         public DateTime Created { get; set; }

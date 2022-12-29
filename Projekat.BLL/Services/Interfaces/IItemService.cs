@@ -11,11 +11,13 @@ namespace Projekat.BLL.Services.Interfaces
 {
     public interface IItemService
     {
-        //Task<ResponsePackage<bool>> RegisterUser(UserDTO userDTO);
-        ResponsePackage<ItemDTO> GetItem(int id);
+        ResponsePackage<ItemDTO> GetItem(int id, string? includeProperties = null);
         ResponsePackage<bool> AddItem(ItemDTO itemDTO);
-        ResponsePackage<bool> UpdateItem(NewItemDTO itemDTO);
-        ResponsePackage<IEnumerable<ItemDTO>> GetAll();
+        ResponsePackage<bool> UpdateItem(ItemDTO itemDTO);
+        ResponsePackage<IEnumerable<ItemDTO>> GetAll(string? includeProperties = null);
+        ResponsePackage<IEnumerable<ItemDTO>> Filter(string name,string model,string make,string? includeProperties = null);
+        ResponsePackage<IEnumerable<ItemDTO>> GetByUser(int UserId,string? includeProperties = null);
+        ResponsePackage<IEnumerable<ItemDTO>> GetLatest(string? includeProperties = null);
         ResponsePackage<bool> DeleteItem(int id);
     }
 }

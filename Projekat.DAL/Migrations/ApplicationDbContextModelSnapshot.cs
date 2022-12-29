@@ -73,6 +73,32 @@ namespace Projekat.DAL.Migrations
                     b.ToTable("Comment");
                 });
 
+            modelBuilder.Entity("Projekat.DAL.Model.Following", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Followings");
+                });
+
             modelBuilder.Entity("Projekat.DAL.Model.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -87,7 +113,7 @@ namespace Projekat.DAL.Migrations
                     b.Property<bool>("IsMainImage")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<int>("Order")
@@ -144,10 +170,7 @@ namespace Projekat.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -155,8 +178,6 @@ namespace Projekat.DAL.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Items");
                 });
@@ -297,11 +318,30 @@ namespace Projekat.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Projekat.DAL.Model.Following", b =>
+                {
+                    b.HasOne("Projekat.DAL.Model.Item", "Item")
+                        .WithMany("FollowedItems")
+                        .HasForeignKey("ItemId");
+
+                    b.HasOne("Projekat.DAL.Model.User", "User")
+                        .WithMany("FollowedItems")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Projekat.DAL.Model.Image", b =>
                 {
-                    b.HasOne("Projekat.DAL.Model.Item", null)
+                    b.HasOne("Projekat.DAL.Model.Item", "Item")
                         .WithMany("Images")
-                        .HasForeignKey("ItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Projekat.DAL.Model.Item", b =>
@@ -313,12 +353,10 @@ namespace Projekat.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("Projekat.DAL.Model.User", null)
-                        .WithMany("FollowedItems")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("Projekat.DAL.Model.User", null)
                         .WithMany("PostedItems")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
@@ -342,6 +380,8 @@ namespace Projekat.DAL.Migrations
             modelBuilder.Entity("Projekat.DAL.Model.Item", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("FollowedItems");
 
                     b.Navigation("Images");
 

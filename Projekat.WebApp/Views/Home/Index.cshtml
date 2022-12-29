@@ -1,233 +1,47 @@
-﻿<div class="slider-area">
-    <div id="carouselSlider" class="carousel slide" data-bs-ride="false">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselSlider" data-bs-slide-to="0" class="active bg-dark" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselSlider" data-bs-slide-to="1" class="bg-dark" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselSlider" data-bs-slide-to="2" class="bg-dark" aria-label="Slide 3"></button>
-            <button type="button" data-bs-target="#carouselSlider" data-bs-slide-to="3" class="bg-dark" aria-label="Slide 4"></button>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active border">
-                <img src="/img/h4-slide.png" alt="..." class="aligncenter" style="width:50%;height:40%">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="text-dark">Električni bicikli</h5>
-                    <p class="text-dark">Some representative placeholder content for the first slide.</p>
+﻿@using Projekat.Shared.DTOs
+@model IEnumerable<ItemDTO>
+@{
+    ViewData["Title"] = "Dashboard";
+}
 
-                </div>
-            </div>
-            <div class="carousel-item border ">
-                <img src="/img/h4-slide2.png" alt="..." class="aligncenter" >
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="text-dark">Električni trotineti</h5>
-                    <p class="text-dark">Some representative placeholder content for the first slide.</p>
-                </div>
-            </div>
-            <div class="carousel-item border">
-                <img src="/img/h4-slide3.png" alt="..." class="aligncenter">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="text-dark">Oprema</h5>
-                    <p class="text-dark">Oprema za električne trotinete i bicikle</p>
-                </div>
-            </div>
-            <div class="carousel-item border">
-                <img src="/img/h4-slide4.png" alt="..." class="aligncenter" >
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="text-dark">Delovi</h5>
-                    <p class="text-dark">Delovi za električne trotinete i bicikle</p>
-                </div>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSlider" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselSlider" data-bs-slide="next">
-            <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-</div> <!-- End slider area -->
+<div>
+    <br>
+    <h1 class="text-success">Most recent items</h1>
+    <hr>
 
-<div class="promo-area">
-    <div class="zigzag-bottom"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="single-promo promo1">
-                    <i class="fa fa-refresh"></i>
-                    <p>30 Days return</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="single-promo promo2">
-                    <i class="fa fa-truck"></i>
-                    <p>Free shipping</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="single-promo promo3">
-                    <i class="fa fa-lock"></i>
-                    <p>Secure payments</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="single-promo promo4">
-                    <i class="fa fa-gift"></i>
-                    <p>New products</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> <!-- End promo area -->
+    <table class="table table-border table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Item Name</th>
+                <th>Model</th>
+                <th>Make</th>
+                <th>Price</th>
+                <th>City</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="border">
 
-<div class="product-widget-area">
-    <div class="zigzag-bottom"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="single-product-widget">
-                    <h2 class="product-wid-title">Top Sellers</h2>
-                    <a href="" class="wid-view-more">View All</a>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-1.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Sony Smart TV - 2015</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td width="10%"><img src="@obj.getMainImage()" class="w-100" /></td>
+                    <td width="15%">@obj.Title</td>
+                    <td width="20%">@obj.Model</td>
+                    <td width="10%">@obj.Make</td>
+                    <td width="10%">@obj.Price.00 RSD</td>
+                    <td width="10%">@obj.City</td>
+                    <td width="10%">
+                        <div class="w-75 btn-group" role="group">
+                            <a class="btn btn-success mx-2" asp-controller="Item" asp-action="Details" asp-route-id="@obj.Id">Details</a>
                         </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-2.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Apple new mac book 2015</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-3.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Apple new i phone 6</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="single-product-widget">
-                    <h2 class="product-wid-title">Recently Viewed</h2>
-                    <a href="#" class="wid-view-more">View All</a>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-4.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Sony playstation microsoft</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-1.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Sony Smart Air Condtion</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-2.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Samsung gallaxy note 4</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="single-product-widget">
-                    <h2 class="product-wid-title">Top New</h2>
-                    <a href="#" class="wid-view-more">View All</a>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-3.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Apple new i phone 6</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-4.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Samsung gallaxy note 4</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                    <div class="single-wid-product">
-                        <a href="single-product.html"><img src="img/product-thumb-1.jpg" alt="" class="product-thumb"></a>
-                        <h2><a href="single-product.html">Sony playstation microsoft</a></h2>
-                        <div class="product-wid-rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> <!-- End product widget area -->
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+

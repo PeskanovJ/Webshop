@@ -20,6 +20,9 @@ namespace Projekat.Shared.DTOs
         public int? Price { get; set; }
         public string City { get; set; }
         public string Description { get; set; }
+        public DateTime Created { get; set; }
+        [Required]
+        public int UserId { get; set; }
 
         [Required]
         [Display(Name = "Category")]
@@ -27,6 +30,18 @@ namespace Projekat.Shared.DTOs
 
         [ValidateNever]
         public ICollection<ImageDTO>? Images { get; set; }
+
+
+        public string getMainImage()
+        {
+            foreach(var image in Images)
+            {
+                if (image.IsMainImage)
+                    return image.Url;
+            }
+
+            return "";
+        }
 
     }
 }

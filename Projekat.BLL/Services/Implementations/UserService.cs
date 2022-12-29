@@ -36,7 +36,12 @@ namespace Projekat.BLL.Services.Implementations
         public ResponsePackage<ProfileDTO> ActivateUser(Guid guid)
         {
             User u = _uow.User.GetFirstOrDefault(u => u.ActivationGuid == Guid.Parse(guid.ToString().ToUpper()));
-            u.ActivationGuid = Guid.Empty;
+            if (u != null)
+            {
+                u.ActivationGuid = Guid.Empty;
+            }
+            else
+               return new ResponsePackage<ProfileDTO>(null, ResponseStatus.AccountAlreadyActivated, "Account already activated");
             _uow.User.Update(u);
             _uow.Save();
 
@@ -45,6 +50,8 @@ namespace Projekat.BLL.Services.Implementations
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
+                ProfileUrl= u.ProfileUrl,
+                Role=u.Role,
 
             },ResponseStatus.OK,"Account activated");
 
@@ -54,27 +61,33 @@ namespace Projekat.BLL.Services.Implementations
         public ResponsePackage<ProfileDTO> LoginUser(LoginDTO loginDTO)
         {
             User u = _uow.User.GetFirstOrDefault(u => u.Email == loginDTO.Email);
-
-            if (u.Password.SequenceEqual(PasswordHasher.GenerateSaltedHash(Encoding.ASCII.GetBytes(loginDTO.Password), u.Salt)))
+            if (u != null)
             {
-                if (u.ActivationGuid == Guid.Empty)
+                if (u.Password.SequenceEqual(PasswordHasher.GenerateSaltedHash(Encoding.ASCII.GetBytes(loginDTO.Password), u.Salt)))
                 {
-                    return new ResponsePackage<ProfileDTO>(new ProfileDTO
+                    if (u.ActivationGuid == Guid.Empty)
                     {
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        Email = u.Email,
-                        ProfileUrl= u.ProfileUrl,
+                        return new ResponsePackage<ProfileDTO>(new ProfileDTO
+                        {
+                            Id= u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Email = u.Email,
+                            ProfileUrl = u.ProfileUrl,
+                            Role = u.Role,
 
-                    }, ResponseStatus.OK, "Login successful");
+                        }, ResponseStatus.OK, "Login successful");
+                    }
+                    else
+                    {
+                        return new ResponsePackage<ProfileDTO>(null, ResponseStatus.AccountNotActivated, "Account is not activated");
+                    }
                 }
                 else
-                {
-                    return new ResponsePackage<ProfileDTO>(null, ResponseStatus.AccountNotActivated, "Account is not activated");
-                }
+                    return new ResponsePackage<ProfileDTO>(null, ResponseStatus.NotFound, "There was an error with login");
             }
             else
-                return new ResponsePackage<ProfileDTO>(null, ResponseStatus.NotFound, "There was an error with login");
+                return new ResponsePackage<ProfileDTO>(null, ResponseStatus.NotFound, "This user does not exist");
         }
 
         private bool MailExists(string email)
@@ -126,7 +139,7 @@ namespace Projekat.BLL.Services.Implementations
             newUser.Role = SD.Roles.User;
             newUser.Created = DateTime.Now;
             newUser.ActivationGuid = Guid.NewGuid();
-            newUser.ProfileUrl = "";
+            newUser.ProfileUrl = @"\img\profilePictures\img_avatar.png";
             try
             {
                 _uow.User.Add(newUser);

@@ -11,6 +11,7 @@
         InvalidPhoneNo = 1001,
         AccountNotActivated=1002,
         InvalidPasswordGuid=1003,
-        CategoryNotFound=1004
+        CategoryNotFound=1004,
+        AccountAlreadyActivated=1005,
     }
 }

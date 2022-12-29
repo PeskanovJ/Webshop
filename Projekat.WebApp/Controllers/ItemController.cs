@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Projekat.BLL.Services.Interfaces;
+using Projekat.DAL.Model;
 using Projekat.DAL.Repository.IRepository;
 using Projekat.Shared.Common;
 using Projekat.Shared.Constants;
@@ -16,17 +17,37 @@ namespace Projekat.WebApp.Controllers
         private readonly IItemService _itemService;
         private readonly ICategoryService _categoryService;
         private readonly IWebHostEnvironment _hostEnviroment;
-        public ItemController(IItemService itemService,ICategoryService categoryService, IWebHostEnvironment hostEnviroment)
+        public ItemController(IItemService itemService, ICategoryService categoryService, IWebHostEnvironment hostEnviroment)
         {
-            _categoryService= categoryService;
+            _categoryService = categoryService;
             _itemService = itemService;
             _hostEnviroment = hostEnviroment;
-            
         }
-
         public IActionResult Index()
         {
-            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetAll();
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetAll("Images");
+            return View(response.Data);
+        }
+
+        [HttpGet]
+        [Route("api/items")]
+        public List<ItemDTO> Get()
+        {
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetAll("Images");
+            return response.Data.ToList();
+        }
+
+        [HttpGet]
+        [Route("api/items/filter")]
+        public List<ItemDTO> Get(string name,string make,string model)
+        {
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.Filter(name,model,make,"Images");
+            return response.Data.ToList();
+        }
+
+        public IActionResult MyItems(int UserId)
+        {
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetByUser(UserId, "Images");
             return View(response.Data);
         }
 
@@ -36,9 +57,20 @@ namespace Projekat.WebApp.Controllers
             if (id != null)
             {
                 int itemId = id.Value;
-                ResponsePackage<ItemDTO> response = _itemService.GetItem(itemId);
+                ResponsePackage<ItemDTO> response = _itemService.GetItem(itemId, includeProperties: "Images");
                 if (response.Status == ResponseStatus.OK)
-                    return View(response.Data);
+                {
+                    NewItemDTO newItemDTO = new NewItemDTO()
+                    {
+                        ItemDTO = response.Data,
+                        CategoryList = _categoryService.GetAll().Data.Select(i => new SelectListItem
+                        {
+                            Text = i.Category,
+                            Value = i.CategoryId.ToString()
+                        })
+                    };
+                    return View(newItemDTO);
+                }
                 else
                 {
                     ModelState.AddModelError(String.Empty, "There was an error while searching for item. Error:" + response.Message);
@@ -48,63 +80,57 @@ namespace Projekat.WebApp.Controllers
             else
                 return View(new NewItemDTO()
                 {
-                    ItemDTO = new ItemDTO(),
+                    ItemDTO = new ItemDTO()
+                    {
+                        Images = new List<ImageDTO>(),
+                    },
                     CategoryList = _categoryService.GetAll().Data.Select(i => new SelectListItem
                     {
                         Text = i.Category,
                         Value = i.CategoryId.ToString()
                     })
                 });
-            
-
-
-
         }
         //POST
         [HttpPost]
         public IActionResult Upsert(IFormCollection dto)
         {
             ItemDTO itemDTO = JsonConvert.DeserializeObject<ItemDTO>(dto["ItemDTO"]);
+            string mainImage = JsonConvert.DeserializeObject<string>(dto["MainImage"]);
             if (ModelState.IsValid)
             {
-                string wwwRootPath = _hostEnviroment.WebRootPath;
-                if (dto.Files != null)
+                if (itemDTO.Id == 0)
                 {
-                    string fileFolderName = Guid.NewGuid().ToString().Replace('-', '_');
-                    var uploads = Path.Combine(wwwRootPath, @"img\items\" + fileFolderName);
-                    Directory.CreateDirectory(uploads);
-                    int i = 0;
-                    itemDTO.Images= new List<ImageDTO>();
-                    foreach (var file in dto.Files)
+                    string wwwRootPath = _hostEnviroment.WebRootPath;
+                    if (dto.Files != null)
                     {
-                        var extension = Path.GetExtension(file.FileName);
-
-                        using (var fileStreams = new FileStream(Path.Combine(uploads, file.FileName + extension), FileMode.Create))
+                        string fileFolderName = Guid.NewGuid().ToString();
+                        var uploads = Path.Combine(wwwRootPath, @"img\items\" + fileFolderName);
+                        Directory.CreateDirectory(uploads);
+                        int i = 0;
+                        itemDTO.Images = new List<ImageDTO>();
+                        foreach (var file in dto.Files)
                         {
-                            file.CopyTo(fileStreams);
-                            itemDTO.Images.Add(new ImageDTO { IsMainImage = false,  Order=i++, Url= Path.Combine(uploads, file.FileName) });
+                            var extension = Path.GetExtension(file.FileName);
+
+                            using (var fileStreams = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
+                            {
+                                file.CopyTo(fileStreams);
+                                itemDTO.Images.Add(new ImageDTO { IsMainImage = file.FileName == mainImage ? true : false, Order = i++, Url = Path.Combine(uploads, file.FileName) });
+                            }
                         }
                     }
                     _itemService.AddItem(itemDTO);
                 }
-                //if (itemDTO.Id == 0)
-                //   // _itemService.AddItem(itemDTO);
-                //else
-                //    //_itemService.UpdateItem(newItemDTO);
-                return RedirectToAction("Index");
+                else
+                    _itemService.UpdateItem(itemDTO);
+
+                return Json(new { redirectToUrl = Url.Action("Index", "Item") });
             }
             return RedirectToAction("Index");
         }
 
-
         [HttpGet]
-        public IActionResult GetAll()
-        {
-            var producList = _itemService.GetAll();
-            return Json(new { data = producList });
-        }
-
-        [HttpDelete]
         public IActionResult Delete(int id)
         {
             var obj = _itemService.GetItem(id);
@@ -112,20 +138,25 @@ namespace Projekat.WebApp.Controllers
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            //string wwwRootPath = _hostEnviroment.WebRootPath;
-            //var oldImagePath = Path.Combine(wwwRootPath, obj.ImageUrl.TrimStart('\\'));
-            //if (System.IO.File.Exists(oldImagePath))
-            //{
-            //    System.IO.File.Delete(oldImagePath);
-            //}
+            string wwwRootPath = _hostEnviroment.WebRootPath;
+            var oldImagePath = Path.Combine(wwwRootPath, obj.Data.Images.First().Url);
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath.Substring(oldImagePath.IndexOf(obj.Data.Images.First().Url)));
+            }
 
             ResponsePackage<bool> response = _itemService.DeleteItem(id);
-            
-            return Json(new { success = true, message = response.Message });
 
-
-
+            return RedirectToAction("Index");
         }
-        
+
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            ResponsePackage<ItemDTO> response = _itemService.GetItem(id,"Images");
+
+            return View(response.Data);
+        }
     }
 }

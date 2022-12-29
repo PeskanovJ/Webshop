@@ -1,54 +1,58 @@
 ﻿@using Projekat.Shared.DTOs
+@using Microsoft.AspNetCore.Http;
 @model IEnumerable<ItemDTO>
 @{
     ViewData["Title"] = "All products";
 }
 
-
-
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Products List</h2>
+            <h2 class="text-success">Products List</h2>
         </div>
+
         <div class="col-6 text-end">
-            <a asp-controller="Item" asp-action="Upsert" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i>  &nbsp; Create New Product
-            </a>
-        </div>
-    </div>
-
-    <br />
-    <br />
-
-    <table class="table table-border table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>Item Name</th>
-
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody class="border">
-
-            @foreach (var obj in Model)
+            @if ((Context.Session != null && Context.Session.GetString("Email") != null))
             {
-                <tr>
-                    <td width="50%">@obj.Title</td>
-                    <td>
-                        <div class="w-75 btn-group" role="group">
-                            <a class="btn btn-primary mx-2" asp-controller="Item" asp-action="Edit" asp-route-id="@obj.Id"><i class="bi bi-pencil-square"></i>Edit</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="w-75 btn-group" role="group">
-                            <a class="btn btn-danger mx-2" onclick="return confirm('Are you sure you want to delete this item?');" asp-controller="Item" asp-action="Delete" asp-route-id="@obj.Id"><i class="bi bi-x-circle"></i>Delete</a>
-                        </div>
-                    </td>
-                </tr>
+                <a asp-controller="Item" asp-action="Upsert" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>  &nbsp; Create New Product
+                </a>
             }
-
-        </tbody>
-    </table>
+            else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
+            {
+                <a asp-controller="Item" asp-action="Upsert" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>  &nbsp; Create New Product
+                </a>
+            }
+            else
+            {
+            }
+        </div>
+        <hr>
+    </div>
+    <div class="container container-fluid bg-green p-3" id="filters">
+        <h3 class="text-white">Search:</h3>
+        <input type="text" placeholder="Name" id="nameSearch">
+        <input type="text" placeholder="Model" id="modelSearch">
+        <input type="text" placeholder="Make" id="makeSearch">
+        <label class="text-white">Sort by:</label>
+        <select id="order">
+            <option value="no-order" class="text-center"> -----No sort----- </option>
+            <option value="orderByNameA">   Name Ascending  </option>
+            <option value="orderByNameD">   Name Descending </option>
+            <option value="orderByModelA">  Model Ascending </option>
+            <option value="orderByModelD">  Model Descending</option>
+            <option value="orderByMakeA">   Make Ascending  </option>
+            <option value="orderByMakeD">   Make Descending </option>
+            <option value="orderByPriceA">  Price Ascending </option>
+            <option value="orderByPriceD">  Price Descending</option>
+        </select>
+        <button class="btn btn-danger" id="cancle">Cancle filters</button>
+    </div>
+    <div id="content">
+    </div>
 </div>
+
+@section Scripts{
+    <script src="~/js/filter.js"></script>
+}

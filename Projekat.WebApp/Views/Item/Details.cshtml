@@ -5,24 +5,52 @@
         <section>
             <form id="item" method="post" enctype="multipart/form-data">
                 <br>
-                <h2>@Model.Title</h2>
+                <h2 class="text-success">@Model.Title</h2>
+                <h3 class="text-success">Company:@Model.Make | Model:@Model.Model</h3>
                 <hr />
 
                 @*SLIDE SHOW*@
-                @*<div class="form-floating py-2 col-12">
-                    <h3>Profile picture:</h3>
-                    <img src="@Model.ProfileUrl" class="card-img-top rounded" style="width:30%;height:30%" />
-                </div>*@
+                <div class="d-flex">
+                    <div class="form-floating py-2 col-12 border bg-success">
+                        <div id="carousel" class="carousel slide">
+                            <div class="carousel-inner">
+                                @foreach (var image in Model.Images)
+                                {
+                                    <div class="carousel-item active">
+                                        <img src="@image.Url" class="d-block w-100">
+                                    </div>
+                                }
+                            </div>
+                            <button class="carousel-control-prev rounded" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon bg-success" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next rounded" type="button" data-bs-target="#carousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon bg-success" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="form-label py-2 col-12">
-                    <label><b>Price:</b></label>
-                    <label><b>@Model.Price</b></label><br>
-                </div>
-               
-                <button id="addToCart" type="submit" class="btn btn-primary">Kupi</button>
-            </form>
-            <br>
-        </section>
-    </div>
+                    <div class="form-label py-2 col-12 ms-3">
+                        <h4>City: @Model.City</h4><br>
+                        <h4>Description:</h4>
+                        <textarea style="resize:none" class="w-100">@Model.Description</textarea>
+                        <br>
+                        <label><b>Price:</b></label>
+                        <label>
+                            @if (Model.Price != 0)
+                            {<b> @Model.Price.00 RSD</b> }
+                        else
+                        { <b>Dogovor</b>}
+                        </label><br>
+                        <button id="addToCart" class="btn btn-success">Add to Cart</button>
+                    </div>
+
+            </div>
+        </form>
+        <br>
+    </section>
+</div>
 
 </div>

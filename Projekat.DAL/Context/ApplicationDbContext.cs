@@ -12,6 +12,7 @@ namespace Projekat.DAL
         public DbSet<Category> Categories { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Following> Followings { get; set; }
 
 
     }

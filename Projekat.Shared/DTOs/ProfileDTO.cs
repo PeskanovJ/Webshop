@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Projekat.Shared.Constants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ namespace Projekat.Shared.DTOs
 {
     public class ProfileDTO
     {
+        public int Id { get; set; }
         [Required]
         [DisplayName("First name")]
         public string FirstName { get; set; }
@@ -28,6 +30,8 @@ namespace Projekat.Shared.DTOs
         public DateTime Created { get; set; }
         [ValidateNever]
         public string ProfileUrl { get; set; }
+
+        public SD.Roles Role { get; set; }
 
     }
 }

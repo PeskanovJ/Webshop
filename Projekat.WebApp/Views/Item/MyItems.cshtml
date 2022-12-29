@@ -1,0 +1,74 @@
+﻿@using Projekat.Shared.DTOs
+@using Microsoft.AspNetCore.Http;
+@model IEnumerable<ItemDTO>
+@{
+    ViewData["Title"] = "All products";
+}
+
+
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-success">My Item List</h2>
+        </div>
+        <div class="col-6 text-end">
+            @if ((Context.Session != null && Context.Session.GetString("Email") != null))
+            {
+                <a asp-controller="Item" asp-action="Upsert" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>  &nbsp; Create New Product
+                </a>
+            }
+            else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
+            {
+                <a asp-controller="Item" asp-action="Upsert" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i>  &nbsp; Create New Product
+                </a>
+            }
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+    <table class="table table-border table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Model</th>
+                <th>Make</th>
+                <th>Price</th>
+                <th>City</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="border">
+
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td width="15%">@obj.Title</td>
+                    <td width="20%">@obj.Model</td>
+                    <td width="10%">@obj.Make</td>
+                    <td width="10%">@obj.Price.00 RSD</td>
+                    <td width="10%">@obj.City</td>
+
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a class="btn btn-success mx-2" asp-controller="Item" asp-action="Upsert" asp-route-id="@obj.Id">Edit</a>
+                        </div>
+                    </td>
+                    <td>
+
+                        <div class="w-75 btn-group" role="group">
+                            <a class="btn btn-danger mx-2" onclick="return confirm('Are you sure you want to delete this item?');" asp-controller="Item" asp-action="Delete" asp-route-id="@obj.Id"><i class="bi bi-x-circle"></i>Delete</a>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

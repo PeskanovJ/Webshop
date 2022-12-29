@@ -42,6 +42,8 @@ namespace Projekat.WebApp.Controllers
 
             if (response.Status == ResponseStatus.OK)
             {
+                HttpContext.Session.SetInt32("Id", response.Data.Id);
+                HttpContext.Session.SetString("Role", response.Data.Role.ToString());
                 HttpContext.Session.SetString("Email",response.Data.Email);
                 HttpContext.Session.SetString("FullName", response.Data.FirstName+" "+response.Data.LastName);
                 HttpContext.Session.SetString("Avatar", response.Data.ProfileUrl);
@@ -71,6 +73,8 @@ namespace Projekat.WebApp.Controllers
                         var cookieOptions = new CookieOptions();
                         cookieOptions.Expires = DateTime.Now.AddDays(365);
                         cookieOptions.Path = "/";
+                        HttpContext.Response.Cookies.Append("LoginCookieId", response.Data.Id.ToString(), cookieOptions);
+                        HttpContext.Response.Cookies.Append("LoginCookieRole", response.Data.Role.ToString(), cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieEmail", response.Data.Email, cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieFullName", response.Data.FirstName + " " + response.Data.LastName, cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieAvatar", response.Data.ProfileUrl,cookieOptions);
@@ -78,6 +82,8 @@ namespace Projekat.WebApp.Controllers
                     }
                     else
                     {
+                        HttpContext.Session.SetString("Role", response.Data.Role.ToString());
+                        HttpContext.Session.SetInt32("Id", response.Data.Id);
                         HttpContext.Session.SetString("Email", response.Data.Email);
                         HttpContext.Session.SetString("FullName", response.Data.FirstName + " " + response.Data.LastName);
                         HttpContext.Session.SetString("Avatar", response.Data.ProfileUrl );
@@ -122,10 +128,19 @@ namespace Projekat.WebApp.Controllers
             return View();
 
         }
+        public IActionResult RegisterAdmin()
+        {
+            return View();
+        }
+
+
+
         [HttpGet]
         public  IActionResult Logout()
         {
             HttpContext.Session.Clear();
+            HttpContext.Response.Cookies.Delete("LoginCookieRole");
+            HttpContext.Response.Cookies.Delete("LoginCookieId");
             HttpContext.Response.Cookies.Delete("LoginCookieFullName");
             HttpContext.Response.Cookies.Delete("LoginCookieEmail");
             HttpContext.Response.Cookies.Delete("LoginCookieAvatar");
@@ -214,7 +229,7 @@ namespace Projekat.WebApp.Controllers
                     if (profile.Data.ProfileUrl != null)
                     {
                         var oldImagePath = Path.Combine(wwwRootPath, profile.Data.ProfileUrl.TrimStart('\\'));
-                        if (System.IO.File.Exists(oldImagePath))
+                        if (System.IO.File.Exists(oldImagePath) && oldImagePath.Substring(oldImagePath.LastIndexOf("profilePictures"))!= "profilePictures\\img_avatar.png")
                         {
                             System.IO.File.Delete(oldImagePath);
                         }
@@ -238,7 +253,8 @@ namespace Projekat.WebApp.Controllers
                         cookieOptions.Path = "/";
                         HttpContext.Response.Cookies.Append("LoginCookieFullName", profileDTO.FirstName + " " + profileDTO.LastName, cookieOptions);
                         HttpContext.Response.Cookies.Append("LoginCookieEmail", profileDTO.Email, cookieOptions);
-                        HttpContext.Response.Cookies.Append("LoginCookieAvatar", profileDTO.ProfileUrl, cookieOptions);
+                        if(file != null) 
+                            HttpContext.Response.Cookies.Append("LoginCookieAvatar", profileDTO.ProfileUrl, cookieOptions);
                     }
                     if (HttpContext.Session.Get("FullName") != null)
                     {

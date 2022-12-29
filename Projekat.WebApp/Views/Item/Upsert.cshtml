@@ -1,13 +1,23 @@
-﻿@model Projekat.Shared.DTOs.NewItemDTO
+﻿@using Microsoft.AspNetCore.Http;
+@model Projekat.Shared.DTOs.NewItemDTO
+
 
 <form method="post" asp-action="Upsert" enctype="multipart/form-data" id="id-forme">
     <input asp-for="@Model.ItemDTO.Id" hidden />
 
+    @if (Context.Session != null && Context.Session.GetInt32("Id") != null)
+    {
+        <input asp-for="@Model.ItemDTO.UserId" value="@Context.Session.GetInt32("Id")" hidden />
+    }
+    else if (Context.Request.Cookies["LoginCookieId"] != null)
+    {
+        <input asp-for="@Model.ItemDTO.UserId" value="@Convert.ToInt32(Context.Request.Cookies["LoginCookieId"])" hidden />
+    }
     <div class="row">
         <div class="col-10">
             <div class="border p-3 mt-4 row">
                 <div class="col-12 pb-2">
-                    <h2 class="text-primary">@(Model.ItemDTO.Id != 0 ? "Edit" : "Add") Item</h2>
+                    <h2 class="text-success">@(Model.ItemDTO.Id != 0 ? "Edit" : "Add") Item</h2>
                     <hr />
                 </div>
                 <div class="mb-3">
@@ -18,8 +28,28 @@
 
                 <h3>Upload your images</h3>
                 <img id="mainImage" src="" title="" class="border" style="max-width:40%;max-height:40%" /><br>
+                <p>This will be the main image of your item.</p>
+                @if (Model.ItemDTO.Images.Count > 0)
+                {
+                    foreach (var image in Model.ItemDTO.Images)
+                    {
+                        if (image.IsMainImage)
+                        {
+                            <script>
+                                document.getElementById("mainImage").src = '@image.Url.Replace('\\','/')';
+                            </script>
+                        }
+                      
+                        <span class="pip" id="">
+                            <img class="imageThumb" id="imageThumb" src="@image.Url" />
+                            <br /><span class="remove">Remove</span><br />
+                        </span>
+
+                    }
+                }
+
                 <div align="left">
-                    <input type="file" id="files" name="files[]" multiple @*asp-for="@Model.Files"*@ />
+                    <input type="file" id="files" name="files[]" multiple />
                 </div>
 
                 <div class="mb-3">
@@ -60,12 +90,11 @@
                 <div class="col-12">
                     @if (@Model.ItemDTO.Id != 0)
                     {
-                        <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+                        <button type="submit" class="btn btn-success" style="width:150px">Update</button>
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
-
+                        <button type="submit" class="btn btn-success" style="width:150px">Create</button>
                     }
                     <a asp-controller="Item" asp-action="Index" class="btn btn-secondary" style="width:150px">Back to List</a>
                 </div>
@@ -75,11 +104,13 @@
 </form>
 
 @section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script>
         var tempFiles = [];
         var dict = new Object();
         $(document).ready(function () {
             if (window.File && window.FileList && window.FileReader) {
+
                 $("#files").on("change", function (e) {
                     var files = e.target.files,
                         filesLength = files.length;
@@ -90,43 +121,46 @@
                         var guid = Math.floor(1000 + Math.random() * 9000);
                         guids.push(guid);
                         fileReader.onload = (function (e) {
-                            $('<span class="pip" id="' + guids.pop() + '" >' +
+                            $('<span class="pip" id="' + guids.shift() + '" >' +
                                 '<img class="imageThumb" id="imageThumb" src="' + e.target.result + '" />' +
                                 '<br/><span class="remove">Remove</span><br/>' +
                                 '</span>').insertAfter("#mainImage");
-                            
+
                             $("#mainImage").attr("src", e.target.result);
 
                             $(".remove").click(function () {
                                 name = dict[$(this).parent(".pip").attr("id")];
                                 delete dict[$(this).parent(".pip").attr("id")];
                                 tempFiles = tempFiles.filter(function (item) {
-
                                     return item.name != name;
                                 });
                                 $(this).parent(".pip").remove();
                             });
                             $(".imageThumb").click(function () {
                                 $("#mainImage").attr("src", this.src);
+                                dict.MainImage = dict[parseInt($(this).parent(".pip").attr("id"))];
                             });
 
                         });
                         fileReader.readAsDataURL(f);
                         dict[guids[guids.length - 1]] = f.name;
-                        tempFiles.push(f);                        
+                        dict.MainImage = f.name;
+                        tempFiles.push(f);
                     }
                 });
             } else {
-                alert("Your browser doesn't support to File API")
+                alert("Your browser doesn't support to File API");
             }
-            
         });
 
         $("form").submit(function (e) {
             e.preventDefault();
+            if (!$('#id-forme').validate())
+                return false;
             var formData = new FormData();
             var ItemDTO = {
-                Id: 0,
+                Id: $('#ItemDTO_Id').val(),
+                UserId: $('#ItemDTO_UserId').val(),
                 Title: $('#ItemDTO_Title').val(),
                 Make: $('#ItemDTO_Make').val(),
                 Model: $('#ItemDTO_Model').val(),
@@ -135,13 +169,13 @@
                 Description: $('#ItemDTO_Description').val(),
                 CategoryId: $('#ItemDTO_CategoryId').val(),
             };
-            
+
             for (i = 0; i < tempFiles.length; i++) {
                 formData.append('Files', tempFiles[i]);
             }
-           
+            formData.append('MainImage', JSON.stringify(dict.MainImage));
             formData.append('ItemDTO', JSON.stringify(ItemDTO));
-            
+
             $.ajax({
                 url: "/Item/Upsert",
                 method: 'POST',
@@ -151,6 +185,9 @@
                 contentType: false,
                 processData: false,
                 data: formData,
+                success: function (response) {
+                    window.location.href = response.redirectToUrl;
+                }
             });
         });
     </script>
