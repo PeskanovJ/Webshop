@@ -54,9 +54,18 @@ namespace Projekat.DAL.DbInitializer
                     Salt = salt,
 
                 });
-                _db.Categories.Add(new Model.Category {  Name = "eSkuteri" });
-                _db.Categories.Add(new Model.Category {  Name = "eTrotineti" });
-                _db.Categories.Add(new Model.Category {  Name = "eBicikli" });
+                if (_db.Categories.FirstOrDefault(u => u.Name == "eSkuteri") == null)
+                {
+                    _db.Categories.Add(new Model.Category { Name = "eSkuteri" });
+                }
+                if (_db.Categories.FirstOrDefault(u => u.Name == "eTrotineti") == null)
+                {
+                    _db.Categories.Add(new Model.Category {  Name = "eTrotineti" });
+                }
+                if (_db.Categories.FirstOrDefault(u => u.Name == "eBicikli") == null)
+                {
+                    _db.Categories.Add(new Model.Category {  Name = "eBicikli" });
+                }
 
                 _db.SaveChanges();
 
