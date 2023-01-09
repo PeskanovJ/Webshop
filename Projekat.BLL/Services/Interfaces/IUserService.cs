@@ -10,6 +10,7 @@ namespace Projekat.BLL.Services.Interfaces
 {
     public interface IUserService
     {
+        Task<ResponsePackage<bool>> RegisterAdmin(AdminDTO userDTO);
         Task<ResponsePackage<bool>> RegisterUser(UserDTO userDTO);
         ResponsePackage<ProfileDTO> LoginUser(LoginDTO loginDTO);
         ResponsePackage<ProfileDTO> ActivateUser(Guid guid);
@@ -17,5 +18,7 @@ namespace Projekat.BLL.Services.Interfaces
         ResponsePackage<bool> ResetPassword(PasswordResetDTO passwordResetDTO);
         ResponsePackage<ProfileDTO> GetProfile(string email);
         ResponsePackage<bool> UpdateProfile(ProfileDTO profileDTO);
+        ResponsePackage<bool> FollowItem(int userId,int itemId);
+        ResponsePackage<bool> UnFollowItem(int userId, int itemId);
     }
 }

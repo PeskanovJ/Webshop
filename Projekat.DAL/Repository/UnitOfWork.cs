@@ -1,4 +1,5 @@
 ﻿using Projekat.DAL;
+using Projekat.DAL.Model;
 using Projekat.DAL.Repository;
 using Projekat.DAL.Repository.IRepository;
 using System;
@@ -25,10 +26,15 @@ namespace Projekat.DAL.Repository
         public ICategoryRepository Category { get; private set; }
         public IItemRepository Item { get; set; }
         public IUserRepository User { get; set; }
-        
+        public void Unfollow(Following following)
+        {
+            _db.Followings.Remove(following);
+            _db.SaveChanges();
+        }
 
         public void Save()
         {
+           
            _db.SaveChanges();
         }
     }

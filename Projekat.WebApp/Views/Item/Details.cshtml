@@ -1,4 +1,5 @@
-﻿@model Projekat.Shared.DTOs.ItemDTO
+﻿@using Microsoft.AspNetCore.Http;
+@model Projekat.Shared.DTOs.ItemDTO
 
 <div class="row">
     <div class="col-md-4">
@@ -9,16 +10,24 @@
                 <h3 class="text-success">Company:@Model.Make | Model:@Model.Model</h3>
                 <hr />
 
-                @*SLIDE SHOW*@
                 <div class="d-flex">
                     <div class="form-floating py-2 col-12 border bg-success">
                         <div id="carousel" class="carousel slide">
                             <div class="carousel-inner">
                                 @foreach (var image in Model.Images)
                                 {
-                                    <div class="carousel-item active">
-                                        <img src="@image.Url" class="d-block w-100">
-                                    </div>
+                                    if (image.IsMainImage)
+                                    {
+                                        <div class="carousel-item active">
+                                            <img src="@image.Url" class="d-block w-100">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="carousel-item">
+                                            <img src="@image.Url" class="d-block w-100">
+                                        </div>
+                                    }
                                 }
                             </div>
                             <button class="carousel-control-prev rounded" type="button" data-bs-target="#carousel" data-bs-slide="prev">
@@ -32,25 +41,59 @@
                         </div>
                     </div>
 
+
                     <div class="form-label py-2 col-12 ms-3">
                         <h4>City: @Model.City</h4><br>
                         <h4>Description:</h4>
                         <textarea style="resize:none" class="w-100">@Model.Description</textarea>
                         <br>
-                        <label><b>Price:</b></label>
-                        <label>
+                        <h4>
+                            <b>Price:</b>
+
                             @if (Model.Price != 0)
-                            {<b> @Model.Price.00 RSD</b> }
+                            {<b> @Model.Price.00 RSD</b>
+                        }
                         else
                         { <b>Dogovor</b>}
-                        </label><br>
-                        <button id="addToCart" class="btn btn-success">Add to Cart</button>
-                    </div>
+                        </h4>
+                        <br>
+                        <button class="btn btn-success">Contact seller</button>
 
-            </div>
-        </form>
-        <br>
-    </section>
-</div>
+                        @if ((Context.Session != null && Context.Session.GetString("Email") != null))
+                        {
+                            if (Model.UserId != Context.Session.GetInt32("Id"))
+                            {
+                                if (!Model.isFollowing(Context.Session.GetInt32("Id").Value))
+                                {
+                                    <button class="btn btn-outline-warning" asp-action="Follow" asp-route-id="@Model.Id">Add to whish list</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-warning" asp-action="UnFollow" asp-route-id="@Model.Id">Remove from wish list</button>
+                                }
+                            }
+                        }
+                        else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
+                        {
+                            if (Model.UserId != Convert.ToInt32(Context.Request.Cookies["LoginCookieId"]))
+                            {
+                                if (!Model.isFollowing(Convert.ToInt32(Context.Request.Cookies["LoginCookieId"])))
+                                {
+                                    <button class="btn btn-outline-warning" asp-action="Follow" asp-route-id="@Model.Id">Add to wish list</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-warning" asp-action="UnFollow" asp-route-id="@Model.Id">Remove from wish list</button>
+                                }
+                            }
+                        }
+                        <br><br>
+                        <button class="btn btn-secondary" asp-action="Index">Back to list</button>
+                    </div>
+                </div>
+            </form>
+            <br>
+        </section>
+    </div>
 
 </div>

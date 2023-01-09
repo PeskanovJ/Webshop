@@ -32,20 +32,22 @@
                         @if ((Context.Session != null && Context.Session.GetString("Email") != null))
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Item" asp-action="MyItems" asp-route-UserId="@Context.Session.GetInt32("Id")">My items</a></li>
+                            <li class="nav-item "><a class="nav-link" asp-controller="Item" asp-action="WishList" asp-route-UserId="@Context.Session.GetInt32("Id")">Wish List</a></li>
                             <li class="nav-item d-flex justify-content-end">
                                 <a class="nav-link" id="logout" asp-controller="Item" asp-action="Upsert">Add new Item</a>
                                 <a class="nav-link" id="logout" asp-controller="Account" asp-action="Logout">Logout</a>
-                                <a class="nav-link w-25" id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Session.GetString("Email")" title="Manage">Hello <b>@Context.Session.GetString("FullName")</b></a>
+                                <a class="nav-link" id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Session.GetString("Email")" title="Manage">Hello <b>@Context.Session.GetString("FullName")</b></a>
                                 <img src="@Context.Session.GetString("Avatar")" class="p-1 rounded" style="width:5%" />
                             </li>
                         }
                         else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Item" asp-action="MyItems" asp-route-UserId="@Context.Request.Cookies["LoginCookieId"]">My items</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Item" asp-action="WishList" asp-route-UserId="@Context.Request.Cookies["LoginCookieId"]">Wish List</a></li>
                             <li class="nav-item d-flex justify-content-end">
                                 <a class="nav-link" id="logout" asp-controller="Item" asp-action="Upsert">Add new Item</a>
                                 <a class="nav-link" id="logout" asp-controller="Account" asp-action="Logout">Logout</a>
-                                <a class="nav-link w-25" id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Request.Cookies["LoginCookieEmail"]" title="Manage">Hello <b>@Context.Request.Cookies["LoginCookieFullName"]</b></a>
+                                <a class="nav-link" id="manage" asp-controller="Account" asp-action="Profil" asp-route-email="@Context.Request.Cookies["LoginCookieEmail"]" title="Manage">Hello <b>@Context.Request.Cookies["LoginCookieFullName"]</b></a>
                                 <img src="@Context.Request.Cookies["LoginCookieAvatar"]" class="p-1 rounded" style="width:5%" />
                             </li>
                         }
@@ -76,7 +78,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-6">
                     <div class="footer-about-us">
-                        <h2><span>Prodavnica eVozila</span></h2>
+                        <h2><span>eVehicle Shop</span></h2>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis sunt id doloribus vero quam laborum quas alias dolores blanditiis iusto consequatur, modi aliquid eveniet eligendi iure eaque ipsam iste, pariatur omnis sint! Suscipit, debitis, quisquam. Laborum commodi veritatis magni at?</p>
                         <div class="footer-social">
                             <a href="#" target="_blank"><i class="fa fa-facebook"></i></a>
@@ -89,20 +91,34 @@
 
                 <div class="col-md-4 col-sm-6">
                     <div class="footer-menu">
-                        <h2 class="footer-wid-title">Navigacija </h2>
+                        <h2 class="footer-wid-title">Navigation </h2>
                         <ul>
-                            <li><a href="#">Moj nalog</a></li>
-                            <li><a href="#">Istorija porudzbina</a></li>
-                            <li><a href="#">Moji oglasi</a></li>
-                            <li><a href="#">Lista želja</a></li>
-                            <li><a href="#">Naslovna</a></li>
+                            @if ((Context.Session != null && Context.Session.GetString("Email") != null))
+                            {
+                                <li><a asp-controller="Account" asp-action="Profil"     asp-route-email="@Context.Session.GetString("Email")"   >My account </a></li>
+                                <li><a asp-controller="Item"    asp-action="MyItems"    asp-route-UserId="@Context.Session.GetInt32("Id")"      >My items   </a></li>
+                                <li><a asp-controller="Item"    asp-action="WishList"   asp-route-UserId="@Context.Session.GetInt32("Id")"      >Wish list  </a></li>
+                            }
+                            else if ((Context.Request.Cookies["LoginCookieEmail"] != null))
+                            {
+                                <li><a asp-controller="Account" asp-action="Profil"     asp-route-email="@Context.Request.Cookies["LoginCookieEmail"]"  >My account </a></li>
+                                <li><a asp-controller="Item"    asp-action="MyItems"    asp-route-UserId="@Context.Request.Cookies["LoginCookieId"]"    >My items   </a></li>
+                                <li><a asp-controller="Item"    asp-action="WishList"   asp-route-UserId="@Context.Request.Cookies["LoginCookieId"]"    >Wish list  </a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-controller="Account" asp-action="Profil">My account</a></li>
+                                <li><a asp-controller="Item" asp-action="MyItems">My items</a></li>
+                                <li><a asp-controller="Item" asp-action="WishList">Wish list</a></li>
+                            }
+                            <li><a asp-controller="Home" asp-action="Index">Home page</a></li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="col-md-4 col-sm-6">
                     <div class="footer-menu">
-                        <h2 class="footer-wid-title">Kategorije</h2>
+                        <h2 class="footer-wid-title">Categories</h2>
                         <ul>
                             <li><a href="#">Električni trotineti</a></li>
                             <li><a href="#">Električni bicikli</a></li>

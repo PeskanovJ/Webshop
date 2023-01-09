@@ -17,6 +17,7 @@ namespace Projekat.BLL.Services.Interfaces
         ResponsePackage<IEnumerable<ItemDTO>> GetAll(string? includeProperties = null);
         ResponsePackage<IEnumerable<ItemDTO>> Filter(string name,string model,string make,string? includeProperties = null);
         ResponsePackage<IEnumerable<ItemDTO>> GetByUser(int UserId,string? includeProperties = null);
+        ResponsePackage<IEnumerable<ItemDTO>> GetFollowed(int UserId, string? includeProperties = null);
         ResponsePackage<IEnumerable<ItemDTO>> GetLatest(string? includeProperties = null);
         ResponsePackage<bool> DeleteItem(int id);
     }

@@ -10,7 +10,6 @@ namespace Projekat.DAL.Model
 {
     public class User : Entity
     {
-
         [Required]
         public string FirstName { get; set; }
         [Required]
@@ -21,7 +20,6 @@ namespace Projekat.DAL.Model
         public string Email { get; set; }
         [Phone]
         public string PhoneNumber { get; set; }
-
         public byte[] Password { get; set; }
         public byte[] Salt { get; set; }
         public ICollection<Item> PostedItems { get; set; }

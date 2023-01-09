@@ -5,10 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Projekat.BLL.Services.Implementations;
 using Projekat.BLL.Services.Interfaces;
 using Projekat.DAL;
+using Projekat.DAL.DbInitializer;
 using Projekat.DAL.Repository;
 using Projekat.DAL.Repository.IRepository;
 using Projekat.Shared.Common;
-using Projk.BLL.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +21,12 @@ builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -40,7 +40,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+SeedDatabase(); 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -57,3 +57,11 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}");
 
 app.Run();
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}

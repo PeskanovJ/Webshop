@@ -1,4 +1,4 @@
-﻿@model Projekat.Shared.DTOs.UserDTO
+﻿@model Projekat.Shared.DTOs.AdminDTO
 
 <div class="row">
     <div class="col-md-4">
@@ -28,19 +28,10 @@
                     <input asp-for="PhoneNumber" class="form-control" aria-required="true" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
-                <div class="form-label py-2 col-6">
-                    <b><label asp-for="Password"></label></b>
-                    <input asp-for="Password" class="form-control" aria-required="true" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-label py-2 col-6">
-                    <b><label asp-for="RepeatPassword"></label></b>
-                    <input asp-for="RepeatPassword" class="form-control" aria-required="true" />
-                    <span asp-validation-for="RepeatPassword" class="text-danger"></span>
-                </div>
+                
                 <br>
                 <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-                <button id="registerSubmit" type="submit" class="w-100 btn btn-primary">Register</button>
+                <button asp-action="RegisterAdmin"  type="submit" class="w-100 btn btn-primary">Register</button>
             </form>
            
         </section>

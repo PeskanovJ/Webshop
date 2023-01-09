@@ -36,6 +36,7 @@ namespace Projekat.BLL.Services.Implementations
             item.Make= newItemDTO.Make;
             item.Model= newItemDTO.Model;
             item.CategoryId= newItemDTO.CategoryId;
+            item.FollowedItems = new List<Following>();
             if(newItemDTO.Images!= null)
             {
                 item.Images = new List<Image>();
@@ -95,6 +96,12 @@ namespace Projekat.BLL.Services.Implementations
                         ItemDTO.Images = new List<ImageDTO>();
                         foreach (var image in item.Images) { ItemDTO.Images.Add(new ImageDTO() { IsMainImage = image.IsMainImage, Order = image.Order, Url = image.Url }); }
                     }
+                    if (item.FollowedItems != null)
+                    {
+                        ItemDTO.Following = new List<FollowingDTO>();
+                        foreach (var following in item.FollowedItems) { if (!following.IsDeleted) ItemDTO.Following.Add(new FollowingDTO() { UserId = following.UserId, ItemId = following.ItemId }); }
+                    }
+
                     retList.Add(ItemDTO);
                 }
             }
@@ -130,6 +137,11 @@ namespace Projekat.BLL.Services.Implementations
                         ItemDTO.Images = new List<ImageDTO>();
                         foreach (var image in item.Images) { ItemDTO.Images.Add(new ImageDTO() { IsMainImage = image.IsMainImage, Order = image.Order, Url = image.Url }); }
                     }
+                    if (item.FollowedItems != null)
+                    {
+                        ItemDTO.Following = new List<FollowingDTO>();
+                        foreach (var following in item.FollowedItems) { if (!following.IsDeleted) ItemDTO.Following.Add(new FollowingDTO() { UserId = following.UserId, ItemId = following.ItemId }); }
+                    }
                     retList.Add(ItemDTO);
                 }
             }
@@ -138,7 +150,7 @@ namespace Projekat.BLL.Services.Implementations
 
         public ResponsePackage<ItemDTO> GetItem(int id, string? includeProperties = null)
         {
-            Item i= _unitOfWork.Item.GetFirstOrDefault(x => x.Id == id, includeProperties: "Images");
+            Item i= _unitOfWork.Item.GetFirstOrDefault(x => x.Id == id, includeProperties: "Images,FollowedItems");
 
             if (i == null || i.IsDeleted)
                 return new ResponsePackage<ItemDTO>(null, ResponseStatus.NotFound, "Item not found");
@@ -155,11 +167,18 @@ namespace Projekat.BLL.Services.Implementations
                     Model = i.Model,
                     Price = i.Price,
                     Created= i.Created,
+                    UserId= i.UserId,
                 };
                 if (i.Images != null)
                 {
                     retItem.Images = new List<ImageDTO>();
                     foreach (var image in i.Images) { retItem.Images.Add(new ImageDTO() { IsMainImage = image.IsMainImage, Order = image.Order, Url = image.Url }); }
+                }
+
+                if (i.FollowedItems != null)
+                {
+                    retItem.Following = new List<FollowingDTO>();
+                    foreach (var following in i.FollowedItems) { if(!following.IsDeleted)retItem.Following.Add(new FollowingDTO() { UserId = following.UserId, ItemId=following.ItemId }); }
                 }
                 return new ResponsePackage<ItemDTO>(retItem, ResponseStatus.OK, "Item found");
             }
@@ -213,13 +232,45 @@ namespace Projekat.BLL.Services.Implementations
             }
             return new ResponsePackage<IEnumerable<ItemDTO>>(retList, ResponseStatus.OK, "All items from User");
         }
+
+        public ResponsePackage<IEnumerable<ItemDTO>> GetFollowed(int UserId, string? includeProperties = null)
+        {
+            var list = _unitOfWork.Item.GetAll(includeProperties: "Images,FollowedItems");
+            var retList = new List<ItemDTO>();
+            foreach (var item in list)
+            {
+                if (item.FollowedItems.FirstOrDefault(u=>u.UserId==UserId) != null)
+                {
+                    ItemDTO ItemDTO = new ItemDTO()
+                    {
+                        Title = item.Title,
+                        Description = item.Description,
+                        Price = item.Price,
+                        City = item.City,
+                        Id = item.Id,
+                        CategoryId = item.CategoryId,
+                        Make = item.Make,
+                        Model = item.Model,
+                        UserId = item.UserId,
+                        Created = item.Created,
+                    };
+                    if (item.Images != null)
+                    {
+                        ItemDTO.Images = new List<ImageDTO>();
+                        foreach (var image in item.Images) { ItemDTO.Images.Add(new ImageDTO() { IsMainImage = image.IsMainImage, Order = image.Order, Url = image.Url }); }
+                    }
+                    retList.Add(ItemDTO);
+                }
+            }
+            return new ResponsePackage<IEnumerable<ItemDTO>>(retList, ResponseStatus.OK, "All items you follow");
+        }
         private IEnumerable<Item> nameFilter(string name,IEnumerable<Item> list)
         {
             List<Item> ret = new List<Item>();
 
             foreach (var item in list)
             {
-                if (item.Title.Contains(name))
+                if (item.Title.ToLower().Contains(name.ToLower()))
                     ret.Add(item);
             }
             return ret;
@@ -230,7 +281,7 @@ namespace Projekat.BLL.Services.Implementations
 
             foreach (var item in list)
             {
-                if (item.Model.Contains(model))
+                if (item.Model.ToLower().Contains(model.ToLower()))
                     ret.Add(item);
             }
             return ret;
@@ -241,7 +292,7 @@ namespace Projekat.BLL.Services.Implementations
 
             foreach (var item in list)
             {
-                if (item.Make.Contains(make))
+                if (item.Make.ToLower().Contains(make.ToLower()))
                     ret.Add(item);
             }
             return ret;

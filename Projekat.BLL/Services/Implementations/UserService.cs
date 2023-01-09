@@ -7,7 +7,6 @@ using Projekat.DAL.Repository.IRepository;
 using Projekat.Shared.Common;
 using Projekat.Shared.Constants;
 using Projekat.Shared.DTOs;
-using Projk.BLL.Services.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,8 +53,6 @@ namespace Projekat.BLL.Services.Implementations
                 Role=u.Role,
 
             },ResponseStatus.OK,"Account activated");
-
-
         }
 
         public ResponsePackage<ProfileDTO> LoginUser(LoginDTO loginDTO)
@@ -98,7 +95,6 @@ namespace Projekat.BLL.Services.Implementations
             else
                 return false; 
         }
-
         private bool PhoneExists(string phone)
         {
             User u = _uow.User.GetFirstOrDefault(u => u.PhoneNumber == phone);
@@ -149,8 +145,6 @@ namespace Projekat.BLL.Services.Implementations
                 emailContent += $"<p>Vas nalog je uspešno napravljen. Kliknite na link ispod da biste ga aktivirali.</p>";
                 emailContent += $"<a href='{_configuration["ActivateAccountUrl"]}{newUser.ActivationGuid}'>Aktiviraj nalog</a>";
 
-
-
                 var success = await _emailService.SendMailAsync(new Shared.Common.EmailData()
                 {
                     To = newUser.Email,
@@ -158,7 +152,6 @@ namespace Projekat.BLL.Services.Implementations
                     IsContentHtml = true,
                     Subject = "Aktivacija naloga"
                 });
-
 
                 if(success)
                     return new ResponsePackage<bool>(success,ResponseStatus.OK,"User registered succesfully");
@@ -168,7 +161,58 @@ namespace Projekat.BLL.Services.Implementations
             catch (Exception ex) {
                 return new ResponsePackage<bool>(false, ResponseStatus.InternalServerError, ex.Message);
             }
-            
+        }
+        public async Task<ResponsePackage<bool>> RegisterAdmin(AdminDTO userDTO)
+        {
+            if (MailExists(userDTO.Email))
+            {
+                return new ResponsePackage<bool>(false, ResponseStatus.InvalidEmail, "Email already exists");
+            }
+            if (PhoneExists(userDTO.PhoneNumber))
+            {
+                return new ResponsePackage<bool>(false, ResponseStatus.InvalidPhoneNo, "Phone number already exists");
+            }
+
+            User newUser = new User();
+            newUser.FirstName = userDTO.FirstName;
+            newUser.LastName = userDTO.LastName;
+            newUser.Email = userDTO.Email;
+            newUser.PhoneNumber = userDTO.PhoneNumber;
+            newUser.Role = SD.Roles.Admin;
+            newUser.Created = DateTime.Now;
+            newUser.ActivationGuid = Guid.NewGuid();
+            newUser.PasswordGuid = Guid.NewGuid();
+            newUser.ProfileUrl = @"\img\profilePictures\img_avatar.png";
+            byte[] salt = PasswordHasher.GenerateSalt();
+            newUser.Salt = salt;
+            newUser.Password = PasswordHasher.GenerateSaltedHash(Encoding.ASCII.GetBytes(newUser.PasswordGuid.ToString()), salt);
+            try
+            {
+                _uow.User.Add(newUser);
+                _uow.Save();
+
+                var emailContent = $"<p>Zdravo {newUser.FirstName} {newUser.LastName},</p>";
+                emailContent += $"<p>Vas nalog je uspešno napravljen. Kliknite na link ispod da biste ga aktivirali i postavili lozinku.</p>";
+                emailContent += $"<a href='{_configuration["ResetPasswordUrl"]}{newUser.PasswordGuid}'>Aktiviraj nalog</a>";
+
+                var success = await _emailService.SendMailAsync(new Shared.Common.EmailData()
+                {
+                    To = newUser.Email,
+                    Content = emailContent,
+                    IsContentHtml = true,
+                    Subject = "Aktivacija naloga"
+                });
+
+                if (success)
+                    return new ResponsePackage<bool>(success, ResponseStatus.OK, "User registered succesfully");
+                else
+                    return new ResponsePackage<bool>(success, ResponseStatus.InternalServerError, "There was an error while registering new user");
+            }
+            catch (Exception ex)
+            {
+                return new ResponsePackage<bool>(false, ResponseStatus.InternalServerError, ex.Message);
+            }
+
         }
 
         public async Task<ResponsePackage<bool>> ForgotPassword(string email)
@@ -210,6 +254,8 @@ namespace Projekat.BLL.Services.Implementations
         {
             User u = _uow.User.GetFirstOrDefault(u => u.PasswordGuid == passwordResetDTO.PasswordGuid);
             if (u != null) { 
+                if(u.ActivationGuid!= Guid.Empty)
+                    u.ActivationGuid= Guid.Empty;
                 u.PasswordGuid = Guid.Empty;
                 byte[] salt = PasswordHasher.GenerateSalt();
                 u.Salt = salt;
@@ -236,8 +282,6 @@ namespace Projekat.BLL.Services.Implementations
                 ProfileUrl=u.ProfileUrl,
                 Created=u.Created,
             },ResponseStatus.OK,"Profile");
-            
-            
         }
 
         public ResponsePackage<bool> UpdateProfile(ProfileDTO profileDTO)
@@ -253,6 +297,48 @@ namespace Projekat.BLL.Services.Implementations
             _uow.Save();
 
             return new ResponsePackage<bool>(true, ResponseStatus.OK, "Profile changed");
+        }
+
+        public ResponsePackage<bool> FollowItem(int userId, int itemId)
+        {
+            User u = _uow.User.GetFirstOrDefault(u => u.Id == userId);
+            Item i = _uow.Item.GetFirstOrDefault(u => u.Id == itemId);
+            if(u.FollowedItems == null)
+                u.FollowedItems= new List<Following>();
+            if(i.FollowedItems==null)
+                i.FollowedItems= new List<Following>();
+
+            if(u.FollowedItems.FirstOrDefault(u=>u.ItemId==itemId)!= null)
+                return new ResponsePackage<bool>() { Data = true, Status = ResponseStatus.ItemAlreadyFollowed, Message="You are already following this item" };
+
+            Following follow = new Following()
+            {
+                User= u,
+                UserId= userId,
+                ItemId= itemId,
+                Item= i
+            };
+
+            u.FollowedItems.Add(follow);
+            i.FollowedItems.Add(follow);
+            _uow.Save();
+
+            return new ResponsePackage<bool>() { Data= true ,Status=ResponseStatus.OK,Message="You are now following this item"};
+        }
+
+        public ResponsePackage<bool> UnFollowItem(int userId, int itemId)
+        {
+            User u = _uow.User.GetFirstOrDefault(u => u.Id == userId,includeProperties: "FollowedItems");
+            Item i = _uow.Item.GetFirstOrDefault(u => u.Id == itemId);
+
+            Following follow = u.FollowedItems.FirstOrDefault(u => u.ItemId == itemId);
+
+            i.FollowedItems.Remove(follow);
+            u.FollowedItems.Remove(follow);
+            
+            _uow.Unfollow(follow);
+
+            return new ResponsePackage<bool>() { Data = true, Status = ResponseStatus.OK, Message = "You are not following this item anymore" };
         }
     }
 }

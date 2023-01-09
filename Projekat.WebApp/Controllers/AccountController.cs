@@ -133,7 +133,26 @@ namespace Projekat.WebApp.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ActionName("RegisterAdmin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterAdminPOST(AdminDTO UserDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var task = await _userService.RegisterAdmin(UserDTO);
+                if (task.Status == ResponseStatus.OK)
+                    return RedirectToAction("Index", "Home");
+                else if (task.Status == ResponseStatus.InvalidEmail)
+                    ModelState.AddModelError("email", task.Message);
+                else if (task.Status == ResponseStatus.InvalidPhoneNo)
+                    ModelState.AddModelError("phoneNumber", task.Message);
+                else
+                    ModelState.AddModelError(String.Empty, task.Message);
+            }
+            return View();
 
+        }
 
         [HttpGet]
         public  IActionResult Logout()
@@ -205,8 +224,10 @@ namespace Projekat.WebApp.Controllers
 
         [HttpGet]
         [ActionName("Profil")]
-        public IActionResult Profil(string email)
+        public IActionResult Profil(string? email)
         {
+            if(email==null)
+                return RedirectToAction("Login", "Account");
             ProfileDTO profileDTO=_userService.GetProfile(email).Data;
 
             return View(profileDTO);

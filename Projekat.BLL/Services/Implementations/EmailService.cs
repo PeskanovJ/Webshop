@@ -7,7 +7,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
-namespace Projk.BLL.Services.Implementations
+namespace Projekat.BLL.Services.Implementations
 {
     public class EmailService : IEmailService
     {

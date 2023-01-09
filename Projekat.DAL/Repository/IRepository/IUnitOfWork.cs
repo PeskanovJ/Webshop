@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Projekat.DAL.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Projekat.DAL.Repository.IRepository
         IItemRepository Item { get; }
         IUserRepository User { get; }
         ICategoryRepository Category { get; }
+        void Unfollow(Following following);
         void Save();
     }
 }

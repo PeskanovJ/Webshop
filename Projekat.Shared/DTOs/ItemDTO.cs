@@ -31,6 +31,9 @@ namespace Projekat.Shared.DTOs
         [ValidateNever]
         public ICollection<ImageDTO>? Images { get; set; }
 
+        [ValidateNever]
+        public ICollection<FollowingDTO>? Following { get; set; }
+
 
         public string getMainImage()
         {
@@ -41,6 +44,17 @@ namespace Projekat.Shared.DTOs
             }
 
             return "";
+        }
+
+        public bool isFollowing(int userId)
+        {
+            foreach (var follow in Following)
+            {
+                if (follow.UserId == userId)
+                    return true;
+            }
+
+            return false;
         }
 
     }

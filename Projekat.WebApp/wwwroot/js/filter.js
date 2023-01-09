@@ -168,13 +168,11 @@ $(document).ready(function () {
         else if (orderBy == 'no-order') {
             filterItems();
         }
-
     });
-
     loaditems();
 });
 
-$(document).on('change paste keyup', '#nameSearch,#modelSearch,#makeSearch', function () {
+$(document).on('click', '#search', function () {
     filterItems();
 })
 

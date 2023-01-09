@@ -1,0 +1,47 @@
+﻿@using Projekat.Shared.DTOs
+@model IEnumerable<ItemDTO>
+@{
+    ViewData["Title"] = "Wish List";
+}
+
+<div>
+    <br>
+    <h1 class="text-success">Most recent items</h1>
+    <hr>
+
+    <table class="table table-border table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Item Name</th>
+                <th>Model</th>
+                <th>Make</th>
+                <th>Price</th>
+                <th>City</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="border">
+
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td width="10%"><img src="@obj.getMainImage()" class="w-100" /></td>
+                    <td width="15%">@obj.Title</td>
+                    <td width="20%">@obj.Model</td>
+                    <td width="10%">@obj.Make</td>
+                    <td width="10%">@obj.Price.00 RSD</td>
+                    <td width="10%">@obj.City</td>
+                    <td width="10%">
+                        <div class="w-75 btn-group" role="group">
+                            <a class="btn btn-success mx-2" asp-controller="Item" asp-action="Details" asp-route-id="@obj.Id">Details</a>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+

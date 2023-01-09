@@ -17,11 +17,13 @@ namespace Projekat.WebApp.Controllers
         private readonly IItemService _itemService;
         private readonly ICategoryService _categoryService;
         private readonly IWebHostEnvironment _hostEnviroment;
-        public ItemController(IItemService itemService, ICategoryService categoryService, IWebHostEnvironment hostEnviroment)
+        private readonly IUserService _userService;
+        public ItemController(IItemService itemService, ICategoryService categoryService, IWebHostEnvironment hostEnviroment, IUserService userService)
         {
             _categoryService = categoryService;
             _itemService = itemService;
             _hostEnviroment = hostEnviroment;
+            _userService = userService;
         }
         public IActionResult Index()
         {
@@ -45,9 +47,19 @@ namespace Projekat.WebApp.Controllers
             return response.Data.ToList();
         }
 
-        public IActionResult MyItems(int UserId)
+        public IActionResult MyItems(int? UserId)
         {
-            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetByUser(UserId, "Images");
+            if (UserId == null)
+               return RedirectToAction("Login", "Account");
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetByUser(UserId.Value, "Images");
+            return View(response.Data);
+        }
+
+        public IActionResult WishList(int? UserId)
+        {
+            if (UserId == null)
+                return RedirectToAction("Login", "Account");
+            ResponsePackage<IEnumerable<ItemDTO>> response = _itemService.GetFollowed(UserId.Value, "Images");
             return View(response.Data);
         }
 
@@ -150,13 +162,61 @@ namespace Projekat.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
-
         [HttpGet]
         public IActionResult Details(int id)
         {
             ResponsePackage<ItemDTO> response = _itemService.GetItem(id,"Images");
 
             return View(response.Data);
+        }
+
+        [HttpPost]
+        public IActionResult Follow(int Id) {
+            int? userId;
+            string user;
+            HttpContext.Request.Cookies.TryGetValue("LoginCookieId",out user);
+            ResponsePackage<bool> response;
+            if (user == null)
+            {
+                userId = HttpContext.Session.GetInt32("Id");
+                if (userId != null)
+                {
+                    response = _userService.FollowItem(userId.Value, Id);
+                }
+                else
+                    return View();
+            }
+            else
+            {
+                userId = Convert.ToInt32(user);
+                response = _userService.FollowItem(userId.Value, Id);
+            }
+            return RedirectToAction("Details", new { id = Id });
+        }
+
+        [HttpPost]
+        public IActionResult UnFollow(int Id)
+        {
+            int? userId;
+            string user;
+            HttpContext.Request.Cookies.TryGetValue("LoginCookieId", out user);
+            ResponsePackage<bool> response;
+            if (user == null)
+            {
+                userId = HttpContext.Session.GetInt32("Id");
+                if (userId != null)
+                {
+                    response = _userService.UnFollowItem(userId.Value, Id);
+                }
+                else
+                    return View();
+            }
+            else
+            {
+                userId = Convert.ToInt32(user);
+                response = _userService.UnFollowItem(userId.Value, Id);
+            }
+            return RedirectToAction("Details", new { id = Id });
         }
     }
 }

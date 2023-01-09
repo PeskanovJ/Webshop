@@ -13,5 +13,6 @@
         InvalidPasswordGuid=1003,
         CategoryNotFound=1004,
         AccountAlreadyActivated=1005,
+        ItemAlreadyFollowed=1006,
     }
 }
